@@ -1,3 +1,4 @@
+import { Button, TextField } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
 
 export type AddItemFormPropsType = {
@@ -16,7 +17,7 @@ export const AddItemForm = (props: AddItemFormPropsType) => {
       props.addItem(taskTitle.trim());
       setTaskTitle('');
     } else {
-      setError('Title is required');
+      setError('Task name is required');
     }
   };
 
@@ -28,14 +29,20 @@ export const AddItemForm = (props: AddItemFormPropsType) => {
   };
   return (
     <div>
-      <input
+      <TextField
+        size="small"
+        label="Enter task name"
+        variant="outlined"
+        color="secondary"
         value={taskTitle}
         onChange={inputHandler}
         onKeyPress={onKeyPressHandler}
-        className={error ? 'error' : ''}
+        error={!!error}
+        helperText={error}
       />
-      <button onClick={addItemHandler}>+</button>
-      {error && <div className="error-message"> {error} </div>}
+      <Button variant="contained" color="secondary" onClick={addItemHandler}>
+        +
+      </Button>
     </div>
   );
 };
