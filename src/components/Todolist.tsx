@@ -37,7 +37,7 @@ export const Todolist = (props: TodoPropsType) => {
     props.changeFilter('active', props.todoId);
   };
   const onCompletedClickHandler = () => {
-    props.changeFilter('complited', props.todoId);
+    props.changeFilter('completed', props.todoId);
   };
 
   const removeTodoHandler = () => {
@@ -96,7 +96,7 @@ export const Todolist = (props: TodoPropsType) => {
         <Button
           color="secondary"
           onClick={onCompletedClickHandler}
-          variant={props.filter === 'complited' ? 'outlined' : 'text'}
+          variant={props.filter === 'completed' ? 'outlined' : 'text'}
         >
           Complited
         </Button>

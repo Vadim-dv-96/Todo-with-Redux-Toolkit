@@ -5,8 +5,8 @@ import { v1 } from 'uuid';
 import { AddItemForm } from './components/AddItemForm';
 import { TaskType, Todolist } from './components/Todolist';
 
-export type FilterValueType = 'all' | 'active' | 'complited';
-export type TodolistsType = {
+export type FilterValueType = 'all' | 'active' | 'completed';
+export type TodolistType = {
   id: string;
   title: string;
   filter: FilterValueType;
@@ -19,7 +19,7 @@ function App() {
   const todolistId1 = v1();
   const todolistId2 = v1();
 
-  const [todolists, setTodolists] = useState<Array<TodolistsType>>([
+  const [todolists, setTodolists] = useState<Array<TodolistType>>([
     { id: todolistId1, title: 'What to learn', filter: 'all' },
     { id: todolistId2, title: 'What to buy', filter: 'all' },
   ]);
@@ -96,7 +96,7 @@ function App() {
 
   const addTodolist = (title: string) => {
     const newTodoId = v1();
-    const newTodo: TodolistsType = { id: newTodoId, title: title, filter: 'all' };
+    const newTodo: TodolistType = { id: newTodoId, title: title, filter: 'all' };
     setTodolists([newTodo, ...todolists]);
     setTasks({
       [newTodoId]: [],
@@ -130,7 +130,7 @@ function App() {
                 return t.isDone === false;
               });
             }
-            if (tl.filter === 'complited') {
+            if (tl.filter === 'completed') {
               tasksForTodolist = allTodolistTasks.filter((t) => {
                 return t.isDone === true;
               });
