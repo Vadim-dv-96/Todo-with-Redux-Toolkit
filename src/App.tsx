@@ -12,7 +12,7 @@ export type TodolistType = {
   filter: FilterValueType;
 };
 export type TasksStateType = {
-  [key: string]: Array<TaskType>;
+  [todolistId: string]: Array<TaskType>;
 };
 
 function App() {

@@ -31,7 +31,7 @@ export const AddItemForm = (props: AddItemFormPropsType) => {
     <div>
       <TextField
         size="small"
-        label="Enter task name"
+        label="Enter name"
         variant="outlined"
         color="secondary"
         value={taskTitle}
