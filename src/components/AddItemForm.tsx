@@ -17,7 +17,7 @@ export const AddItemForm = (props: AddItemFormPropsType) => {
       props.addItem(taskTitle.trim());
       setTaskTitle('');
     } else {
-      setError('Task name is required');
+      setError('Name is required');
     }
   };
 

@@ -15,14 +15,14 @@ type TodoPropsType = {
   todoId: string;
   title: string;
   tasks: Array<TaskType>;
-  removeTask: (id: string, todoId: string) => void;
-  changeFilter: (value: FilterValueType, todoId: string) => void;
+  removeTask: (todoId: string, id: string) => void;
+  changeTodoFilter: (todoId: string, value: FilterValueType) => void;
   addTask: (taskTitle: string, todoId: string) => void;
   changeTaskStatus: (taskId: string, newTaskStatus: boolean, todoId: string) => void;
-  changeTaskTitle: (title: string, todoId: string, taskId: string) => void;
+  changeTaskTitle: (todoId: string, taskId: string, newTitle: string) => void;
   filter: FilterValueType;
   removeTodolist: (todoId: string) => void;
-  changeTodoTitle: (newTitle: string, todoId: string) => void;
+  changeTodoTitle: (todoId: string, newTitle: string) => void;
 };
 
 export const Todolist = (props: TodoPropsType) => {
@@ -31,13 +31,13 @@ export const Todolist = (props: TodoPropsType) => {
   };
 
   const onAllClickHandler = () => {
-    props.changeFilter('all', props.todoId);
+    props.changeTodoFilter(props.todoId, 'all');
   };
   const onActiveClickHandler = () => {
-    props.changeFilter('active', props.todoId);
+    props.changeTodoFilter(props.todoId, 'active');
   };
   const onCompletedClickHandler = () => {
-    props.changeFilter('completed', props.todoId);
+    props.changeTodoFilter(props.todoId, 'completed');
   };
 
   const removeTodoHandler = () => {
@@ -45,7 +45,7 @@ export const Todolist = (props: TodoPropsType) => {
   };
 
   const changeTodoTitleHandler = (title: string) => {
-    props.changeTodoTitle(title, props.todoId);
+    props.changeTodoTitle(props.todoId, title);
   };
 
   return (
@@ -61,7 +61,7 @@ export const Todolist = (props: TodoPropsType) => {
       <div>
         {props.tasks.map((t) => {
           const removeTaskHandler = () => {
-            props.removeTask(t.id, props.todoId);
+            props.removeTask(props.todoId, t.id);
           };
 
           const onChangeСheckboxHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +70,7 @@ export const Todolist = (props: TodoPropsType) => {
           };
 
           const onChangeInputHandler = (title: string) => {
-            props.changeTaskTitle(title, props.todoId, t.id);
+            props.changeTaskTitle(props.todoId, t.id, title);
           };
 
           return (
