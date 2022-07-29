@@ -7,6 +7,8 @@ export type EditableSpanPropsType = {
 };
 
 export const EditableSpan = (props: EditableSpanPropsType) => {
+  console.log('EditableSpan render');
+
   const [editMode, setEditMode] = useState(false);
   const [title, setTitle] = useState('');
 
@@ -25,15 +27,7 @@ export const EditableSpan = (props: EditableSpanPropsType) => {
   };
 
   return editMode ? (
-    <TextField
-      color="secondary"
-      variant="standard"
-      size="small"
-      value={title}
-      onChange={onChangeHandler}
-      autoFocus
-      onBlur={activateViewMode}
-    />
+    <TextField color="secondary" variant="standard" size="small" value={title} onChange={onChangeHandler} autoFocus onBlur={activateViewMode} />
   ) : (
     <span onDoubleClick={activateEditMode}> {props.value} </span>
   );
