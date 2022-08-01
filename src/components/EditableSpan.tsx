@@ -1,4 +1,5 @@
 import { TextField } from '@mui/material';
+import React from 'react';
 import { ChangeEvent, useState } from 'react';
 
 export type EditableSpanPropsType = {
@@ -6,9 +7,8 @@ export type EditableSpanPropsType = {
   onChange: (title: string) => void;
 };
 
-export const EditableSpan = (props: EditableSpanPropsType) => {
-  console.log('EditableSpan render');
-
+export const EditableSpan = React.memo((props: EditableSpanPropsType) => {
+  console.log('render EditableSpan');
   const [editMode, setEditMode] = useState(false);
   const [title, setTitle] = useState('');
 
@@ -31,4 +31,4 @@ export const EditableSpan = (props: EditableSpanPropsType) => {
   ) : (
     <span onDoubleClick={activateEditMode}> {props.value} </span>
   );
-};
+});

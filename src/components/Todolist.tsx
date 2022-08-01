@@ -7,26 +7,6 @@ import { AddItemForm } from './AddItemForm';
 import { EditableSpan } from './EditableSpan';
 import { Task } from './Task';
 
-export type TaskType = {
-  id: string;
-  title: string;
-  isDone: boolean;
-};
-
-type TodoPropsType = {
-  todoId: string;
-  title: string;
-  tasks: Array<TaskType>;
-  removeTask: (todoId: string, id: string) => void;
-  changeTodoFilter: (todoId: string, value: FilterValueType) => void;
-  addTask: (taskTitle: string, todoId: string) => void;
-  changeTaskStatus: (taskId: string, newTaskStatus: boolean, todoId: string) => void;
-  changeTaskTitle: (todoId: string, taskId: string, newTitle: string) => void;
-  filter: FilterValueType;
-  removeTodolist: (todoId: string) => void;
-  changeTodoTitle: (todoId: string, newTitle: string) => void;
-};
-
 export const Todolist = React.memo(
   ({
     todoId,
@@ -41,8 +21,9 @@ export const Todolist = React.memo(
     removeTodolist,
     changeTodoTitle, //деструктеризация props, что бы убрать ошибки в зависимостях useCallback
   }: TodoPropsType) => {
-    console.log('Todolist called');
-    const addTaskItemForm = useCallback(
+    console.log('Todo render');
+
+    const addTaskForItemForm = useCallback(
       (title: string) => {
         addTask(title, todoId);
       },
@@ -64,9 +45,12 @@ export const Todolist = React.memo(
       removeTodolist(todoId);
     };
 
-    const changeTodoTitleHandler = (title: string) => {
-      changeTodoTitle(todoId, title);
-    };
+    const changeTodoTitleHandler = useCallback(
+      (title: string) => {
+        changeTodoTitle(todoId, title);
+      },
+      [changeTodoTitle, todoId]
+    );
 
     let tasksForTodolist = tasks;
 
@@ -80,28 +64,6 @@ export const Todolist = React.memo(
         return t.isDone === true;
       });
     }
-
-    const removeTaskForComponentTask = useCallback(
-      (taskId: string) => {
-        removeTask(todoId, taskId);
-      },
-      [removeTask, todoId]
-    );
-
-    const changeTaskStatusForComponentTask = useCallback(
-      (taskId: string, newIsDoneValue: boolean) => {
-        changeTaskStatus(taskId, newIsDoneValue, todoId);
-      },
-      [changeTaskStatus, todoId]
-    );
-
-    const changeTaskTitleForComponentTask = useCallback(
-      (taskId: string, title: string) => {
-        changeTaskTitle(todoId, taskId, title);
-      },
-      [changeTaskTitle, todoId]
-    );
-
     return (
       <div>
         <h3>
@@ -111,18 +73,10 @@ export const Todolist = React.memo(
           </IconButton>
         </h3>
 
-        <AddItemForm addItem={addTaskItemForm} />
+        <AddItemForm addItem={addTaskForItemForm} />
         <div>
           {tasksForTodolist.map((t) => {
-            return (
-              <Task
-                key={t.id}
-                task={t}
-                removeTask={removeTaskForComponentTask}
-                changeTaskStatus={changeTaskStatusForComponentTask}
-                changeTaskTitle={changeTaskTitleForComponentTask}
-              />
-            );
+            return <Task key={t.id} todoId={todoId} task={t} removeTask={removeTask} changeTaskStatus={changeTaskStatus} changeTaskTitle={changeTaskTitle} />;
           })}
         </div>
         <div style={{ paddingTop: '10px' }}>
@@ -140,3 +94,24 @@ export const Todolist = React.memo(
     );
   }
 );
+
+//types
+export type TaskType = {
+  id: string;
+  title: string;
+  isDone: boolean;
+};
+
+type TodoPropsType = {
+  todoId: string;
+  title: string;
+  tasks: Array<TaskType>;
+  removeTask: (todoId: string, id: string) => void;
+  changeTaskStatus: (taskId: string, newTaskStatus: boolean, todoId: string) => void;
+  changeTaskTitle: (todoId: string, taskId: string, newTitle: string) => void;
+  changeTodoFilter: (todoId: string, value: FilterValueType) => void;
+  addTask: (taskTitle: string, todoId: string) => void;
+  filter: FilterValueType;
+  removeTodolist: (todoId: string) => void;
+  changeTodoTitle: (todoId: string, newTitle: string) => void;
+};

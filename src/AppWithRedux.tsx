@@ -20,6 +20,8 @@ export type TasksStateType = {
 };
 
 function AppWithRedux() {
+  console.log('AppWithRedux render');
+
   const todolists = useSelector<AppRootStateType, Array<TodolistType>>((state) => state.todolists);
   const tasks = useSelector<AppRootStateType, TasksStateType>((state) => state.tasks);
 
