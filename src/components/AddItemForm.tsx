@@ -2,6 +2,7 @@ import { Button, TextField } from '@mui/material';
 import React from 'react';
 import { ChangeEvent, useState } from 'react';
 
+//types
 export type AddItemFormPropsType = {
   addItem: (title: string) => void;
 };

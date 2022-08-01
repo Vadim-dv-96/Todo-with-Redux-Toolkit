@@ -5,6 +5,15 @@ import { ChangeEvent } from 'react';
 import { EditableSpan } from './EditableSpan';
 import { TaskType } from './Todolist';
 
+//types
+export type TaskPropsType = {
+  todoId: string;
+  task: TaskType;
+  removeTask: (todoId: string, id: string) => void;
+  changeTaskStatus: (taskId: string, newTaskStatus: boolean, todoId: string) => void;
+  changeTaskTitle: (todoId: string, taskId: string, newTitle: string) => void;
+};
+
 export const Task = React.memo((props: TaskPropsType) => {
   const removeTaskHandler = () => {
     props.removeTask(props.todoId, props.task.id);
@@ -34,12 +43,3 @@ export const Task = React.memo((props: TaskPropsType) => {
     </div>
   );
 });
-
-//types
-export type TaskPropsType = {
-  todoId: string;
-  task: TaskType;
-  removeTask: (todoId: string, id: string) => void;
-  changeTaskStatus: (taskId: string, newTaskStatus: boolean, todoId: string) => void;
-  changeTaskTitle: (todoId: string, taskId: string, newTitle: string) => void;
-};
