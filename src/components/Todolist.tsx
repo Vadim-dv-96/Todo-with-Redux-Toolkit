@@ -2,7 +2,8 @@ import { Delete } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
 import React from 'react';
 import { useCallback } from 'react';
-import { FilterValueType } from '../App';
+import { TaskStatuses, TaskType } from '../api/task-api';
+import { FilterValueType } from '../state/todolists-reducer';
 import { AddItemForm } from './AddItemForm';
 import { EditableSpan } from './EditableSpan';
 import { Task } from './Task';
@@ -21,8 +22,6 @@ export const Todolist = React.memo(
     removeTodolist,
     changeTodoTitle, //деструктеризация props, что бы убрать ошибки в зависимостях useCallback
   }: TodoPropsType) => {
-    console.log('Todo render');
-
     const addTaskForItemForm = useCallback(
       (title: string) => {
         addTask(title, todoId);
@@ -56,12 +55,12 @@ export const Todolist = React.memo(
 
     if (filter === 'active') {
       tasksForTodolist = tasks.filter((t) => {
-        return t.isDone === false;
+        return t.status === TaskStatuses.New;
       });
     }
     if (filter === 'completed') {
       tasksForTodolist = tasks.filter((t) => {
-        return t.isDone === true;
+        return t.status === TaskStatuses.Completed;
       });
     }
     return (
@@ -96,18 +95,12 @@ export const Todolist = React.memo(
 );
 
 //types
-export type TaskType = {
-  id: string;
-  title: string;
-  isDone: boolean;
-};
-
 type TodoPropsType = {
   todoId: string;
   title: string;
   tasks: Array<TaskType>;
   removeTask: (todoId: string, id: string) => void;
-  changeTaskStatus: (taskId: string, newTaskStatus: boolean, todoId: string) => void;
+  changeTaskStatus: (taskId: string, status: TaskStatuses, todoId: string) => void;
   changeTaskTitle: (todoId: string, taskId: string, newTitle: string) => void;
   changeTodoFilter: (todoId: string, value: FilterValueType) => void;
   addTask: (taskTitle: string, todoId: string) => void;
