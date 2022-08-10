@@ -2,11 +2,11 @@ import { Delete } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
 import React from 'react';
 import { useCallback } from 'react';
-import { TaskStatuses, TaskType } from '../api/task-api';
-import { FilterValueType } from '../state/todolists-reducer';
-import { AddItemForm } from './AddItemForm';
-import { EditableSpan } from './EditableSpan';
-import { Task } from './Task';
+import { TaskStatuses, TaskType } from '../../api/task-api';
+import { FilterValueType } from '../../state/todolists-reducer';
+import { AddItemForm } from '../AddItemForm';
+import { EditableSpan } from '../EditableSpan';
+import { Task } from '../Task/Task';
 
 export const Todolist = React.memo(
   ({

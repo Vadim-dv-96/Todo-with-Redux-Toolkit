@@ -1,6 +1,6 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import { Task } from '../components/Task';
+import { Task } from '../components/Task/Task';
 import { TaskPriorities, TaskStatuses } from '../api/task-api';
 
 export default {
