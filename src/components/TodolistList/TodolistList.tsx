@@ -1,36 +1,40 @@
 import { Grid, Paper } from '@mui/material';
-import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useCallback, useEffect } from 'react';
 import { TaskStatuses } from '../../api/task-api';
-import { AppRootStateType } from '../../state/store';
-import { TasksStateType, removeTaskAC, addTaskAC, changeTaskStatusAC, changeTaskTitleAC } from '../../state/tasks-reducer';
-import { TodolistDomainType, FilterValueType, changeTodolistFilterAC, changeTodolistTitleAC, removeTodolistAC, addTodolistAC } from '../../state/todolists-reducer';
+import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
+import { changeTaskTitleAC, deleteTaskTC, addTaskTC, updateTaskStatusTC } from '../../state/tasks-reducer';
+import { FilterValueType, changeTodolistFilterAC, changeTodolistTitleAC, removeTodolistAC, addTodolistAC, getTodosTC } from '../../state/todolists-reducer';
 import { AddItemForm } from '../AddItemForm';
 import { Todolist } from '../Todolist/Todolist';
 
 export function TodolistList() {
-  const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>((state) => state.todolists);
-  const tasks = useSelector<AppRootStateType, TasksStateType>((state) => state.tasks);
+  // типизированый хук useAppSelector
+  const todolists = useAppSelector((state) => state.todolists);
+  const tasks = useAppSelector((state) => state.tasks);
+  // типизированый хук useAppDispatch
+  const dispatch = useAppDispatch();
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getTodosTC());
+  }, [dispatch]);
 
   const removeTask = useCallback(
     (todoId: string, taskId: string) => {
-      dispatch(removeTaskAC(todoId, taskId));
+      dispatch(deleteTaskTC(todoId, taskId));
     },
     [dispatch]
   );
 
   const addTask = useCallback(
     (taskName: string, todoId: string) => {
-      dispatch(addTaskAC(taskName, todoId));
+      dispatch(addTaskTC(todoId, taskName));
     },
     [dispatch]
   );
 
   const changeTaskStatus = useCallback(
     (taskId: string, status: TaskStatuses, todoId: string) => {
-      dispatch(changeTaskStatusAC(taskId, status, todoId));
+      dispatch(updateTaskStatusTC(todoId, taskId, status));
     },
     [dispatch]
   );

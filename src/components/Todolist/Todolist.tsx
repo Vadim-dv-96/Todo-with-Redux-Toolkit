@@ -1,8 +1,10 @@
 import { Delete } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useCallback } from 'react';
 import { TaskStatuses, TaskType } from '../../api/task-api';
+import { useAppDispatch } from '../../hooks/hooks';
+import { getTasksTC } from '../../state/tasks-reducer';
 import { FilterValueType } from '../../state/todolists-reducer';
 import { AddItemForm } from '../AddItemForm';
 import { EditableSpan } from '../EditableSpan';
@@ -22,6 +24,12 @@ export const Todolist = React.memo(
     removeTodolist,
     changeTodoTitle, //деструктеризация props, что бы убрать ошибки в зависимостях useCallback
   }: TodoPropsType) => {
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+      dispatch(getTasksTC(todoId));
+    }, [dispatch, todoId]);
+
     const addTaskForItemForm = useCallback(
       (title: string) => {
         addTask(title, todoId);
@@ -86,7 +94,7 @@ export const Todolist = React.memo(
             Active
           </Button>
           <Button color="secondary" onClick={onCompletedClickHandler} variant={filter === 'completed' ? 'outlined' : 'text'}>
-            Complited
+            Completed
           </Button>
         </div>
       </div>

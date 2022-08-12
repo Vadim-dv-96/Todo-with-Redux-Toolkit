@@ -13,21 +13,21 @@ export const taskAPI = {
     return instance.get<GetTasksType>(`todo-lists/${todolistId}/tasks`);
   },
   createTask(todolistId: string, title: string) {
-    return instance.post<BaseResponseType<TaskType>>(`todo-lists/${todolistId}/tasks`, { title });
+    return instance.post<BaseResponseType<{ item: TaskType }>>(`todo-lists/${todolistId}/tasks`, { title });
   },
   deleteTask(todolistId: string, taskId: string) {
     return instance.delete<BaseResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`);
   },
-  updateTask(todolistId: string, taskId: string, payload: PayloadUpdateType) {
-    return instance.put<UpdateTaskType>(`todo-lists/${todolistId}/tasks/${taskId}`, payload);
+  updateTask(todolistId: string, taskId: string, model: UpdateTaskModelType) {
+    return instance.put<BaseResponseType<{ item: TaskType }>>(`todo-lists/${todolistId}/tasks/${taskId}`, model);
   },
 };
 //types
-export type PayloadUpdateType = {
+export type UpdateTaskModelType = {
   title: string;
   description: string;
-  status: number;
-  priority: number;
+  status: TaskStatuses;
+  priority: TaskPriorities;
   startDate: string;
   deadline: string;
 };
@@ -61,22 +61,22 @@ export type GetTasksType = {
   items: Array<TaskType>;
   totalCount: number;
 };
-export type UpdateTaskType = {
-  data: {
-    item: {
-      addedDate: string;
-      deadline: string;
-      description: string;
-      id: string;
-      order: number;
-      priority: number;
-      startDate: string;
-      status: number;
-      title: string;
-      todoListId: string;
-    };
-  };
-  resultCode: number;
-  messages: Array<string>;
-  fieldsErrors: Array<string>;
-};
+// export type UpdateTaskType = {
+//   data: {
+//     item: {
+//       addedDate: string;
+//       deadline: string;
+//       description: string;
+//       id: string;
+//       order: number;
+//       priority: number;
+//       startDate: string;
+//       status: number;
+//       title: string;
+//       todoListId: string;
+//     };
+//   };
+//   resultCode: number;
+//   messages: Array<string>;
+//   fieldsErrors: Array<string>;
+// };
