@@ -9,6 +9,7 @@ import {
   todolistsReducer,
 } from './todolists-reducer';
 import { v1 } from 'uuid';
+import { TodolistType } from '../api/todolist-api';
 
 let todolistId1: string;
 let todolistId2: string;
@@ -35,7 +36,14 @@ test('correct todolist should be removed', () => {
 test('correct todolist should be added', () => {
   let newTodolistTitle = 'New Todolist';
 
-  const endState = todolistsReducer(startState, addTodolistAC(newTodolistTitle));
+  const todo: TodolistType = {
+    addedDate: '',
+    id: '435fsdxg-dsf5',
+    order: 1,
+    title: newTodolistTitle,
+  };
+
+  const endState = todolistsReducer(startState, addTodolistAC(todo));
 
   expect(endState.length).toBe(3);
   expect(endState[0].title).toBe(newTodolistTitle);

@@ -2,8 +2,8 @@ import { Grid, Paper } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { TaskStatuses } from '../../api/task-api';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { changeTaskTitleAC, deleteTaskTC, addTaskTC, updateTaskStatusTC } from '../../state/tasks-reducer';
-import { FilterValueType, changeTodolistFilterAC, changeTodolistTitleAC, removeTodolistAC, addTodolistAC, getTodosTC } from '../../state/todolists-reducer';
+import { deleteTaskTC, addTaskTC, updateTaskTC } from '../../state/tasks-reducer';
+import { FilterValueType, changeTodolistFilterAC, getTodosTC, addTodoTC, removeTodoTC, changeTodoTitleTC } from '../../state/todolists-reducer';
 import { AddItemForm } from '../AddItemForm';
 import { Todolist } from '../Todolist/Todolist';
 
@@ -34,14 +34,14 @@ export function TodolistList() {
 
   const changeTaskStatus = useCallback(
     (taskId: string, status: TaskStatuses, todoId: string) => {
-      dispatch(updateTaskStatusTC(todoId, taskId, status));
+      dispatch(updateTaskTC(todoId, taskId, { status }));
     },
     [dispatch]
   );
 
   const changeTaskTitle = useCallback(
     (todoId: string, taskId: string, newTitle: string) => {
-      dispatch(changeTaskTitleAC(todoId, taskId, newTitle));
+      dispatch(updateTaskTC(todoId, taskId, { title: newTitle }));
     },
     [dispatch]
   );
@@ -55,23 +55,23 @@ export function TodolistList() {
 
   const changeTodoTitle = useCallback(
     (todoId: string, newTitle: string) => {
-      dispatch(changeTodolistTitleAC(todoId, newTitle));
+      dispatch(changeTodoTitleTC(todoId, newTitle));
     },
     [dispatch]
   );
 
   const removeTodolist = useCallback(
     (todoId: string) => {
-      const action = removeTodolistAC(todoId); //создане переменной,что бы не создавать 2 обьекта ActionCreate
-      dispatch(action);
+      // const action = removeTodoTC(todoId); //создане переменной,что бы не создавать 2 обьекта ActionCreate
+      dispatch(removeTodoTC(todoId));
     },
     [dispatch]
   );
 
   const addTodolist = useCallback(
     (title: string) => {
-      const action = addTodolistAC(title); //делаем переменную action для одинаковой todoId в оба редьюсера
-      dispatch(action);
+      // const action = addTodoTC(title); //делаем переменную action для одинаковой todoId в оба редьюсера
+      dispatch(addTodoTC(title));
     },
     [dispatch]
   );
