@@ -2,9 +2,10 @@ import { Delete } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useCallback } from 'react';
-import { TaskStatuses, TaskType } from '../../api/task-api';
+import { RequestStatusType } from '../../api/app-reducer';
+import { TaskStatuses } from '../../api/task-api';
 import { useAppDispatch } from '../../hooks/hooks';
-import { getTasksTC } from '../../state/tasks-reducer';
+import { getTasksTC, TaskDomainType } from '../../state/tasks-reducer';
 import { FilterValueType } from '../../state/todolists-reducer';
 import { AddItemForm } from '../AddItemForm';
 import { EditableSpan } from '../EditableSpan';
@@ -12,6 +13,7 @@ import { Task } from '../Task/Task';
 
 export const Todolist = React.memo(
   ({
+    entityStatus,
     todoId,
     title,
     tasks,
@@ -74,16 +76,27 @@ export const Todolist = React.memo(
     return (
       <div>
         <h3>
-          <EditableSpan value={title} onChange={changeTodoTitleHandler} />
-          <IconButton size="medium" color="secondary" onClick={removeTodoHandler}>
+          <EditableSpan entityStatus={entityStatus} value={title} onChange={changeTodoTitleHandler} />
+          <IconButton disabled={entityStatus === 'loading'} size="medium" color="secondary" onClick={removeTodoHandler}>
             <Delete fontSize="small" />
           </IconButton>
         </h3>
 
-        <AddItemForm addItem={addTaskForItemForm} />
+        <AddItemForm addItem={addTaskForItemForm} entityStatus={entityStatus} />
         <div>
           {tasksForTodolist.map((t) => {
-            return <Task key={t.id} todoId={todoId} task={t} removeTask={removeTask} changeTaskStatus={changeTaskStatus} changeTaskTitle={changeTaskTitle} />;
+            return (
+              <Task
+                entityStatus={entityStatus}
+                entityTaskStatus={t.entityTaskStatus}
+                key={t.id}
+                todoId={todoId}
+                task={t}
+                removeTask={removeTask}
+                changeTaskStatus={changeTaskStatus}
+                changeTaskTitle={changeTaskTitle}
+              />
+            );
           })}
         </div>
         <div style={{ paddingTop: '10px' }}>
@@ -104,9 +117,10 @@ export const Todolist = React.memo(
 
 //types
 type TodoPropsType = {
+  entityStatus: RequestStatusType;
   todoId: string;
   title: string;
-  tasks: Array<TaskType>;
+  tasks: Array<TaskDomainType>;
   removeTask: (todoId: string, id: string) => void;
   changeTaskStatus: (taskId: string, status: TaskStatuses, todoId: string) => void;
   changeTaskTitle: (todoId: string, taskId: string, newTitle: string) => void;

@@ -89,6 +89,7 @@ export function TodolistList() {
             <Grid item key={tl.id}>
               <Paper style={{ padding: '20px' }}>
                 <Todolist
+                  entityStatus={tl.entityStatus}
                   todoId={tl.id}
                   title={tl.title}
                   tasks={tasksForTodolist}

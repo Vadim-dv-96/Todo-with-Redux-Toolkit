@@ -19,6 +19,7 @@ beforeEach(() => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
 
       {
@@ -32,6 +33,7 @@ beforeEach(() => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
 
       {
@@ -45,6 +47,7 @@ beforeEach(() => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
     ],
     todolistId2: [
@@ -59,6 +62,7 @@ beforeEach(() => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
 
       {
@@ -72,6 +76,7 @@ beforeEach(() => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
 
       {
@@ -85,6 +90,7 @@ beforeEach(() => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
     ],
   };

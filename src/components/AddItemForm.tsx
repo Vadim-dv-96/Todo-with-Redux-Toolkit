@@ -1,10 +1,12 @@
 import { Button, TextField } from '@mui/material';
 import React from 'react';
 import { ChangeEvent, useState } from 'react';
+import { RequestStatusType } from '../api/app-reducer';
 
 //types
 export type AddItemFormPropsType = {
   addItem: (title: string) => void;
+  entityStatus?: RequestStatusType;
 };
 
 export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
@@ -41,8 +43,9 @@ export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
         onKeyPress={onKeyPressHandler}
         error={!!error}
         helperText={error}
+        disabled={props.entityStatus === 'loading'}
       />
-      <Button variant="contained" color="secondary" onClick={addItemHandler}>
+      <Button disabled={props.entityStatus === 'loading'} variant="contained" color="secondary" onClick={addItemHandler}>
         +
       </Button>
     </div>

@@ -1,21 +1,23 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
-import { combineReducers, createStore, legacy_createStore } from 'redux';
+import { combineReducers, legacy_createStore } from 'redux';
 import { v1 } from 'uuid';
+import { appReducer } from '../api/app-reducer';
 import { TaskPriorities, TaskStatuses } from '../api/task-api';
-import { AppRootStateType, store } from './store';
+import { AppRootStateType } from './store';
 import { tasksReducer } from './tasks-reducer';
 import { todolistsReducer } from './todolists-reducer';
 
 const rootReducer = combineReducers({
   tasks: tasksReducer,
   todolists: todolistsReducer,
+  api: appReducer,
 });
 
 const initialGlobalState = {
   todolists: [
-    { id: 'todolistId1', title: 'What to learn', filter: 'all', addedDate: '', order: 0 },
-    { id: 'todolistId2', title: 'What to buy', filter: 'all', addedDate: '', order: 0 },
+    { id: 'todolistId1', title: 'What to learn', filter: 'all', addedDate: '', order: 0, entityStatus: 'idle' },
+    { id: 'todolistId2', title: 'What to buy', filter: 'all', addedDate: '', order: 0, entityStatus: 'idle' },
   ],
   tasks: {
     ['todolistId1']: [
@@ -30,6 +32,7 @@ const initialGlobalState = {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
       {
         id: v1(),
@@ -42,6 +45,7 @@ const initialGlobalState = {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
     ],
     ['todolistId2']: [
@@ -56,6 +60,7 @@ const initialGlobalState = {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
       {
         id: v1(),
@@ -68,9 +73,11 @@ const initialGlobalState = {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
     ],
   },
+  api: { status: 'loading', error: null },
 };
 
 export const storyBookStore = legacy_createStore(rootReducer, initialGlobalState as AppRootStateType);
