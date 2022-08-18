@@ -1,8 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { combineReducers, legacy_createStore } from 'redux';
+import { applyMiddleware, combineReducers, legacy_createStore } from 'redux';
+import thunk from 'redux-thunk';
 import { v1 } from 'uuid';
-import { appReducer } from '../api/app-reducer';
+import { appReducer } from './app-reducer';
 import { TaskPriorities, TaskStatuses } from '../api/task-api';
 import { AppRootStateType } from './store';
 import { tasksReducer } from './tasks-reducer';
@@ -77,10 +78,10 @@ const initialGlobalState = {
       },
     ],
   },
-  api: { status: 'loading', error: null },
+  api: { status: 'idle', error: null },
 };
 
-export const storyBookStore = legacy_createStore(rootReducer, initialGlobalState as AppRootStateType);
+export const storyBookStore = legacy_createStore(rootReducer, initialGlobalState as AppRootStateType, applyMiddleware(thunk));
 
 export const ReduxStoreProviderDecorator = (storyFn: () => React.ReactNode) => {
   return <Provider store={storyBookStore}>{storyFn()}</Provider>;

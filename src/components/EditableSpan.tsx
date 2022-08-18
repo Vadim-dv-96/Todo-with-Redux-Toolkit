@@ -1,12 +1,13 @@
 import { TextField } from '@mui/material';
 import React from 'react';
 import { ChangeEvent, useState } from 'react';
-import { RequestStatusType } from '../api/app-reducer';
+import { RequestStatusType } from '../state/app-reducer';
 
 export type EditableSpanPropsType = {
   value: string;
   onChange: (title: string) => void;
   entityStatus: RequestStatusType;
+  entityTaskStatus?: RequestStatusType;
 };
 
 export const EditableSpan = React.memo((props: EditableSpanPropsType) => {
@@ -29,7 +30,7 @@ export const EditableSpan = React.memo((props: EditableSpanPropsType) => {
 
   return editMode ? (
     <TextField
-      disabled={props.entityStatus === 'loading'}
+      disabled={props.entityStatus === 'loading' || props.entityTaskStatus === 'loading'}
       color="secondary"
       variant="standard"
       size="small"

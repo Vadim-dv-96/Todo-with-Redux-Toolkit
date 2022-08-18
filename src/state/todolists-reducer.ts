@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { RequestStatusType, setAppStatusAC } from '../api/app-reducer';
+import { RequestStatusType, setAppStatusAC } from './app-reducer';
 import { todolistAPI, TodolistType } from '../api/todolist-api';
 import { handleAppError, handleNetworkError } from '../utils/error-utils';
 import { AppThunk } from './store';

@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { RequestStatusType, setAppStatusAC } from '../api/app-reducer';
+import { RequestStatusType, setAppStatusAC } from './app-reducer';
 import { taskAPI, TaskPriorities, TaskStatuses, TaskType, UpdateTaskModelType } from '../api/task-api';
 import { handleAppError, handleNetworkError } from '../utils/error-utils';
 import { AppRootStateType, AppThunk } from './store';
@@ -55,8 +55,9 @@ export const tasksReducer = (state: TasksStateType = initialState, action: TaskA
         ...state,
         [action.todoId]: state[action.todoId].map((t) => {
           //вариант для дизейбла только одной таски
-          // return t.id === action.taskId ? { ...t, entityTaskStatus: action.entityTaskStatus } : t;
-          return { ...t, entityTaskStatus: action.entityTaskStatus };
+          return t.id === action.taskId ? { ...t, entityTaskStatus: action.entityTaskStatus } : t;
+          // вариант для дизейбла всех тасок конкретного todo
+          // return { ...t, entityTaskStatus: action.entityTaskStatus };
         }),
       };
 
@@ -77,8 +78,8 @@ export const updateTaskAC = (taskId: string, model: UpdateDomainTaskModelType, t
 export const getTasksAC = (todoId: string, tasks: TaskType[]) => {
   return { type: 'GET-TASKS', todoId, tasks } as const;
 };
-export const changeTaskEntityStatusAC = (todoId: string, entityTaskStatus: RequestStatusType) => {
-  return { type: 'CHANGE-TASK-ENTITY-STATUS', todoId, entityTaskStatus } as const;
+export const changeTaskEntityStatusAC = (todoId: string, entityTaskStatus: RequestStatusType, taskId: string) => {
+  return { type: 'CHANGE-TASK-ENTITY-STATUS', todoId, entityTaskStatus, taskId } as const;
 };
 
 // Thunks
@@ -97,14 +98,13 @@ export const deleteTaskTC =
   (todoId: string, taskId: string): AppThunk =>
   (dispatch) => {
     dispatch(setAppStatusAC('loading'));
-    dispatch(changeTaskEntityStatusAC(todoId, 'loading'));
+    dispatch(changeTaskEntityStatusAC(todoId, 'loading', taskId));
     taskAPI
       .deleteTask(todoId, taskId)
       .then((res) => {
         if (res.data.resultCode === 0) {
           dispatch(removeTaskAC(todoId, taskId));
           dispatch(setAppStatusAC('succeeded'));
-          dispatch(changeTaskEntityStatusAC(todoId, 'idle'));
         } else {
           handleAppError(dispatch, res.data);
         }

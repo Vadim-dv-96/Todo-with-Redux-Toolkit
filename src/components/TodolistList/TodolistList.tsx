@@ -7,7 +7,9 @@ import { FilterValueType, changeTodolistFilterAC, getTodosTC, addTodoTC, removeT
 import { AddItemForm } from '../AddItemForm';
 import { Todolist } from '../Todolist/Todolist';
 
-export function TodolistList() {
+type TodolistListPropsType = { demo?: boolean };
+
+export const TodolistList: React.FC<TodolistListPropsType> = ({ demo = false }) => {
   // типизированый хук useAppSelector
   const todolists = useAppSelector((state) => state.todolists);
   const tasks = useAppSelector((state) => state.tasks);
@@ -15,7 +17,9 @@ export function TodolistList() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getTodosTC());
+    if (!demo) {
+      dispatch(getTodosTC());
+    }
   }, [dispatch]);
 
   const removeTask = useCallback(
@@ -89,18 +93,16 @@ export function TodolistList() {
             <Grid item key={tl.id}>
               <Paper style={{ padding: '20px' }}>
                 <Todolist
-                  entityStatus={tl.entityStatus}
-                  todoId={tl.id}
-                  title={tl.title}
+                  todo={tl}
                   tasks={tasksForTodolist}
                   removeTask={removeTask}
                   changeTodoFilter={changeTodoFilter}
                   addTask={addTask}
                   changeTaskStatus={changeTaskStatus}
                   changeTaskTitle={changeTaskTitle}
-                  filter={tl.filter}
                   removeTodolist={removeTodolist}
                   changeTodoTitle={changeTodoTitle}
+                  demo={demo}
                 />
               </Paper>
             </Grid>
@@ -109,4 +111,4 @@ export function TodolistList() {
       </Grid>
     </>
   );
-}
+};

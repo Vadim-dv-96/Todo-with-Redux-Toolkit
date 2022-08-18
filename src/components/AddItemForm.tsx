@@ -1,7 +1,7 @@
 import { Button, TextField } from '@mui/material';
 import React from 'react';
 import { ChangeEvent, useState } from 'react';
-import { RequestStatusType } from '../api/app-reducer';
+import { RequestStatusType } from '../state/app-reducer';
 
 //types
 export type AddItemFormPropsType = {

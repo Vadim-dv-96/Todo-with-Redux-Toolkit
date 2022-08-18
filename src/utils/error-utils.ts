@@ -1,4 +1,4 @@
-import { setErrorAC, setAppStatusAC } from '../api/app-reducer';
+import { setErrorAC, setAppStatusAC } from '../state/app-reducer';
 import { BaseResponseType } from '../api/todolist-api';
 import { AppDispatch } from '../state/store';
 

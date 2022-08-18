@@ -4,7 +4,9 @@ import { TodolistList } from './components/TodolistList/TodolistList';
 import { useAppSelector } from './hooks/hooks';
 import { ErrorSnackbar } from './components/ErrorSnackbar/ErrorSnackbar';
 
-function AppWithRedux() {
+type PropsType = { demo?: boolean };
+
+function AppWithRedux({ demo = false }: PropsType) {
   const status = useAppSelector((state) => state.api.status);
   return (
     <div className="App">
@@ -19,7 +21,7 @@ function AppWithRedux() {
       </AppBar>
       {status === 'loading' && <LinearProgress />}
       <Container fixed>
-        <TodolistList />
+        <TodolistList demo={demo} />
       </Container>
     </div>
   );

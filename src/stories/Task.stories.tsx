@@ -29,6 +29,7 @@ TaskIsDoneStory.args = {
     order: 0,
     priority: TaskPriorities.Low,
     description: '',
+    entityTaskStatus: 'idle',
   },
 };
 
@@ -45,5 +46,6 @@ TaskIsNotDoneStory.args = {
     order: 0,
     priority: TaskPriorities.Low,
     description: '',
+    entityTaskStatus: 'idle',
   },
 };

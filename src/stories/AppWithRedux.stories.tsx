@@ -8,6 +8,9 @@ export default {
   decorators: [ReduxStoreProviderDecorator],
 } as ComponentMeta<typeof AppWithRedux>;
 
-const Template: ComponentStory<typeof AppWithRedux> = (args) => <AppWithRedux />;
+const Template: ComponentStory<typeof AppWithRedux> = (args) => <AppWithRedux {...args} />;
 
 export const AppWithReduxStory = Template.bind({});
+AppWithReduxStory.args = {
+  demo: true,
+};
