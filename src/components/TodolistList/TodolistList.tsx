@@ -1,9 +1,17 @@
 import { Grid, Paper } from '@mui/material';
 import { useCallback, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import { TaskStatuses } from '../../api/task-api';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { deleteTaskTC, addTaskTC, updateTaskTC } from '../../state/tasks-reducer';
-import { FilterValueType, changeTodolistFilterAC, getTodosTC, addTodoTC, removeTodoTC, changeTodoTitleTC } from '../../state/todolists-reducer';
+import {
+  FilterValueType,
+  changeTodolistFilterAC,
+  getTodosTC,
+  addTodoTC,
+  removeTodoTC,
+  changeTodoTitleTC,
+} from '../../state/todolists-reducer';
 import { AddItemForm } from '../AddItemForm';
 import { Todolist } from '../Todolist/Todolist';
 
@@ -13,11 +21,12 @@ export const TodolistList: React.FC<TodolistListPropsType> = ({ demo = false }) 
   // типизированый хук useAppSelector
   const todolists = useAppSelector((state) => state.todolists);
   const tasks = useAppSelector((state) => state.tasks);
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
   // типизированый хук useAppDispatch
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!demo) {
+    if (!demo && isLoggedIn) {
       dispatch(getTodosTC());
     }
   }, [dispatch]);
@@ -79,6 +88,11 @@ export const TodolistList: React.FC<TodolistListPropsType> = ({ demo = false }) 
     },
     [dispatch]
   );
+
+  if (!isLoggedIn) {
+    return <Navigate to={'login'} />;
+  }
+
   return (
     <>
       <Grid style={{ padding: '20px' }}>

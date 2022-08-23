@@ -21,7 +21,31 @@ export const todolistAPI = {
     return instance.put<BaseResponseType>(`todo-lists/${todoId}`, { title });
   },
 };
+
+export const authAPI = {
+  login(loginPayload: LoginParamsType) {
+    return instance.post<BaseResponseType<{ userId: number }>>('auth/login', loginPayload);
+  },
+  me() {
+    return instance.get<BaseResponseType<AuthMeResponseType>>('auth/me');
+  },
+  logOut() {
+    return instance.delete<BaseResponseType>('auth/login');
+  },
+};
+
 //types
+export type LoginParamsType = {
+  email: string;
+  password: string;
+  rememberMe?: boolean;
+  captcha?: string;
+};
+export type AuthMeResponseType = {
+  id: number;
+  email: string;
+  login: string;
+};
 export type BaseResponseType<T = {}> = {
   resultCode: number;
   messages: Array<string>;
@@ -34,21 +58,3 @@ export type TodolistType = {
   order: number;
   title: string;
 };
-// export type CreateTodoType = {
-//   resultCode: number;
-//   messages: Array<string>;
-//   data: { item: TodoType };
-//   fieldsErrors: Array<string>;
-// };
-// export type DeleteTodoType = {
-//   resultCode: number;
-//   messages: Array<string>;
-//   data: {};
-//   fieldsErrors: Array<string>;
-// };
-// export type UpdateTodoType = {
-//   resultCode: number;
-//   messages: Array<string>;
-//   data: {};
-//   fieldsErrors: Array<string>;
-// };

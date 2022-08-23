@@ -3,10 +3,14 @@ import { RequestStatusType, setAppStatusAC } from './app-reducer';
 import { todolistAPI, TodolistType } from '../api/todolist-api';
 import { handleAppError, handleNetworkError } from '../utils/error-utils';
 import { AppThunk } from './store';
+import { getTasksTC } from './tasks-reducer';
 
 const initialState: Array<TodolistDomainType> = [];
 
-export const todolistsReducer = (state: Array<TodolistDomainType> = initialState, action: TodoActionsType): Array<TodolistDomainType> => {
+export const todolistsReducer = (
+  state: Array<TodolistDomainType> = initialState,
+  action: TodoActionsType
+): Array<TodolistDomainType> => {
   switch (action.type) {
     case 'REMOVE-TODOLIST': {
       const newState = state.filter((tl) => tl.id !== action.todoId);
@@ -75,10 +79,18 @@ export const changeTodolistEntityStatusAC = (todoId: string, entityStatus: Reque
 export const getTodosTC = (): AppThunk => {
   return (dispatch) => {
     dispatch(setAppStatusAC('loading'));
-    todolistAPI.getTodolists().then((res) => {
-      dispatch(setTodolistAC(res.data));
-      dispatch(setAppStatusAC('succeeded'));
-    });
+    todolistAPI
+      .getTodolists()
+      .then((res) => {
+        dispatch(setTodolistAC(res.data));
+        dispatch(setAppStatusAC('succeeded'));
+        return res.data;
+      })
+      .then((todos) => {
+        todos.forEach((tl) => {
+          dispatch(getTasksTC(tl.id)); //fix bag( что бы запрос за тасками шел последовательно после запроса getTodo)
+        });
+      });
   };
 };
 

@@ -1,4 +1,11 @@
-import { addTaskAC, removeTaskAC, tasksReducer, TasksStateType, UpdateDomainTaskModelType, updateTaskAC } from './tasks-reducer';
+import {
+  addTaskAC,
+  removeTaskAC,
+  tasksReducer,
+  TasksStateType,
+  UpdateDomainTaskModelType,
+  updateTaskAC,
+} from './tasks-reducer';
 import { addTodolistAC, removeTodolistAC } from './todolists-reducer';
 import { TaskPriorities, TaskStatuses } from '../api/task-api';
 import { TodolistType } from '../api/todolist-api';
@@ -114,6 +121,7 @@ test('correct task should be deleted from correct array', () => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
       {
         id: '2',
@@ -126,6 +134,7 @@ test('correct task should be deleted from correct array', () => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
       {
         id: '3',
@@ -138,6 +147,7 @@ test('correct task should be deleted from correct array', () => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
     ],
     todolistId2: [
@@ -152,6 +162,7 @@ test('correct task should be deleted from correct array', () => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
       {
         id: '3',
@@ -164,6 +175,7 @@ test('correct task should be deleted from correct array', () => {
         order: 0,
         priority: TaskPriorities.Low,
         description: '',
+        entityTaskStatus: 'idle',
       },
     ],
   });
@@ -181,6 +193,7 @@ test('correct task should be added to correct array', () => {
     order: 0,
     priority: TaskPriorities.Low,
     description: '',
+    entityTaskStatus: 'idle',
   };
   const action = addTaskAC(newTask);
 

@@ -1,10 +1,9 @@
 import { Delete } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useCallback } from 'react';
 import { TaskStatuses } from '../../api/task-api';
-import { useAppDispatch } from '../../hooks/hooks';
-import { getTasksTC, TaskDomainType } from '../../state/tasks-reducer';
+import { TaskDomainType } from '../../state/tasks-reducer';
 import { FilterValueType, TodolistDomainType } from '../../state/todolists-reducer';
 import { AddItemForm } from '../AddItemForm';
 import { EditableSpan } from '../EditableSpan';
@@ -23,13 +22,11 @@ export const Todolist = React.memo(
     removeTodolist,
     changeTodoTitle, //деструктеризация props, что бы убрать ошибки в зависимостях useCallback
   }: TodoPropsType) => {
-    const dispatch = useAppDispatch();
-
-    useEffect(() => {
-      if (!demo) {
-        dispatch(getTasksTC(todo.id));
-      }
-    }, [dispatch, todo.id]);
+    // useEffect(() => {
+    //   if (!demo) {
+    //     dispatch(getTasksTC(todo.id));
+    //   }
+    // }, [dispatch, todo.id]);
 
     const addTaskForItemForm = useCallback(
       (title: string) => {
@@ -76,7 +73,12 @@ export const Todolist = React.memo(
       <div>
         <h3>
           <EditableSpan entityStatus={todo.entityStatus} value={todo.title} onChange={changeTodoTitleHandler} />
-          <IconButton disabled={todo.entityStatus === 'loading'} size="medium" color="secondary" onClick={removeTodoHandler}>
+          <IconButton
+            disabled={todo.entityStatus === 'loading'}
+            size="medium"
+            color="secondary"
+            onClick={removeTodoHandler}
+          >
             <Delete fontSize="small" />
           </IconButton>
         </h3>
@@ -104,7 +106,11 @@ export const Todolist = React.memo(
           <Button color="error" onClick={onActiveClickHandler} variant={todo.filter === 'active' ? 'outlined' : 'text'}>
             Active
           </Button>
-          <Button color="secondary" onClick={onCompletedClickHandler} variant={todo.filter === 'completed' ? 'outlined' : 'text'}>
+          <Button
+            color="secondary"
+            onClick={onCompletedClickHandler}
+            variant={todo.filter === 'completed' ? 'outlined' : 'text'}
+          >
             Completed
           </Button>
         </div>

@@ -8,11 +8,13 @@ import { TaskPriorities, TaskStatuses } from '../api/task-api';
 import { AppRootStateType } from './store';
 import { tasksReducer } from './tasks-reducer';
 import { todolistsReducer } from './todolists-reducer';
+import { authReducer } from '../components/Login/auth-reducer';
 
 const rootReducer = combineReducers({
   tasks: tasksReducer,
   todolists: todolistsReducer,
   api: appReducer,
+  auth: authReducer,
 });
 
 const initialGlobalState = {
@@ -78,10 +80,15 @@ const initialGlobalState = {
       },
     ],
   },
-  api: { status: 'idle', error: null },
+  api: { status: 'idle', error: null, isInitialized: false },
+  auth: { isLoggedIn: false },
 };
 
-export const storyBookStore = legacy_createStore(rootReducer, initialGlobalState as AppRootStateType, applyMiddleware(thunk));
+export const storyBookStore = legacy_createStore(
+  rootReducer,
+  initialGlobalState as AppRootStateType,
+  applyMiddleware(thunk)
+);
 
 export const ReduxStoreProviderDecorator = (storyFn: () => React.ReactNode) => {
   return <Provider store={storyBookStore}>{storyFn()}</Provider>;
