@@ -1,4 +1,5 @@
-import { applyMiddleware, combineReducers, legacy_createStore } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { applyMiddleware, combineReducers } from 'redux';
 import thunk, { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { AuthActionsType, authReducer } from '../components/Login/auth-reducer';
 import { appReducer, AppReducerActionType } from './app-reducer';
@@ -12,7 +13,12 @@ export const rootReducer = combineReducers({
   auth: authReducer,
 });
 
-export const store = legacy_createStore(rootReducer, applyMiddleware(thunk));
+// export const store = legacy_createStore(rootReducer, applyMiddleware(thunk));
+
+export const store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(thunk),
+});
 
 export type AppRootStateType = ReturnType<typeof rootReducer>;
 
