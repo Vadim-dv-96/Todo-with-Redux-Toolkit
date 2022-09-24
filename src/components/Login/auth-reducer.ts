@@ -9,7 +9,7 @@ const initialState = {
 };
 // type InitialStateType = typeof initialState;
 
-export const sliceAuth = createSlice({
+const sliceAuth = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {

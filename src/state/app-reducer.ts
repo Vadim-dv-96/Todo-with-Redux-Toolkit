@@ -10,7 +10,7 @@ const initialState = {
   isInitialized: false,
 };
 
-export const slice = createSlice({
+const slice = createSlice({
   name: 'app',
   initialState: initialState,
   reducers: {
