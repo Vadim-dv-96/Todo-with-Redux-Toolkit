@@ -2,8 +2,9 @@ import { AxiosError } from 'axios';
 import { RequestStatusType, setAppStatusAC } from './app-reducer';
 import { taskAPI, TaskPriorities, TaskStatuses, TaskType, UpdateTaskModelType } from '../api/task-api';
 import { handleAppError, handleNetworkError } from '../utils/error-utils';
-import { AppRootStateType, AppThunk } from './store';
+import { AppRootStateType } from './store';
 import { AddTodolistActionType, RemoveTodolistActionType, SetTodolistActionType } from './todolists-reducer';
+import { Dispatch } from '@reduxjs/toolkit';
 
 const initialState: TasksStateType = {};
 
@@ -83,62 +84,56 @@ export const changeTaskEntityStatusAC = (todoId: string, entityTaskStatus: Reque
 };
 
 // Thunks
-export const getTasksTC =
-  (todoId: string): AppThunk =>
-  (dispatch) => {
-    dispatch(setAppStatusAC('loading'));
-    taskAPI.getTasks(todoId).then((res) => {
-      const tasks = res.data.items;
-      dispatch(getTasksAC(todoId, tasks));
-      dispatch(setAppStatusAC('succeeded'));
+export const getTasksTC = (todoId: string) => (dispatch: Dispatch) => {
+  dispatch(setAppStatusAC({ status: 'loading' }));
+  taskAPI.getTasks(todoId).then((res) => {
+    const tasks = res.data.items;
+    dispatch(getTasksAC(todoId, tasks));
+    dispatch(setAppStatusAC({ status: 'succeeded' }));
+  });
+};
+
+export const deleteTaskTC = (todoId: string, taskId: string) => (dispatch: Dispatch) => {
+  dispatch(setAppStatusAC({ status: 'loading' }));
+  dispatch(changeTaskEntityStatusAC(todoId, 'loading', taskId));
+  taskAPI
+    .deleteTask(todoId, taskId)
+    .then((res) => {
+      if (res.data.resultCode === 0) {
+        dispatch(removeTaskAC(todoId, taskId));
+        dispatch(setAppStatusAC({ status: 'succeeded' }));
+      } else {
+        handleAppError(dispatch, res.data);
+      }
+      dispatch(setAppStatusAC({ status: 'failed' }));
+    })
+    .catch((err: AxiosError) => {
+      handleNetworkError(dispatch, err.message);
     });
-  };
+};
 
-export const deleteTaskTC =
-  (todoId: string, taskId: string): AppThunk =>
-  (dispatch) => {
-    dispatch(setAppStatusAC('loading'));
-    dispatch(changeTaskEntityStatusAC(todoId, 'loading', taskId));
-    taskAPI
-      .deleteTask(todoId, taskId)
-      .then((res) => {
-        if (res.data.resultCode === 0) {
-          dispatch(removeTaskAC(todoId, taskId));
-          dispatch(setAppStatusAC('succeeded'));
-        } else {
-          handleAppError(dispatch, res.data);
-        }
-        dispatch(setAppStatusAC('failed'));
-      })
-      .catch((err: AxiosError) => {
-        handleNetworkError(dispatch, err.message);
-      });
-  };
-
-export const addTaskTC =
-  (todoId: string, title: string): AppThunk =>
-  (dispatch) => {
-    dispatch(setAppStatusAC('loading'));
-    taskAPI
-      .createTask(todoId, title)
-      .then((res) => {
-        if (res.data.resultCode === 0) {
-          const task = res.data.data.item;
-          dispatch(addTaskAC(task));
-          dispatch(setAppStatusAC('succeeded'));
-        } else {
-          handleAppError(dispatch, res.data);
-        }
-        dispatch(setAppStatusAC('failed'));
-      })
-      .catch((err: AxiosError) => {
-        handleNetworkError(dispatch, err.message);
-      });
-  };
+export const addTaskTC = (todoId: string, title: string) => (dispatch: Dispatch) => {
+  dispatch(setAppStatusAC({ status: 'loading' }));
+  taskAPI
+    .createTask(todoId, title)
+    .then((res) => {
+      if (res.data.resultCode === 0) {
+        const task = res.data.data.item;
+        dispatch(addTaskAC(task));
+        dispatch(setAppStatusAC({ status: 'succeeded' }));
+      } else {
+        handleAppError(dispatch, res.data);
+      }
+      dispatch(setAppStatusAC({ status: 'failed' }));
+    })
+    .catch((err: AxiosError) => {
+      handleNetworkError(dispatch, err.message);
+    });
+};
 
 export const updateTaskTC =
-  (todoId: string, taskId: string, domainModel: UpdateDomainTaskModelType): AppThunk =>
-  (dispatch, getState: () => AppRootStateType) => {
+  (todoId: string, taskId: string, domainModel: UpdateDomainTaskModelType) =>
+  (dispatch: Dispatch, getState: () => AppRootStateType) => {
     const state = getState();
     const allTasksState = state.tasks;
     const tasksForCurrentTodo = allTasksState[todoId];
@@ -157,17 +152,17 @@ export const updateTaskTC =
         startDate: task.startDate,
         ...domainModel,
       };
-      dispatch(setAppStatusAC('loading'));
+      dispatch(setAppStatusAC({ status: 'loading' }));
       taskAPI
         .updateTask(todoId, taskId, apiModel)
         .then((res) => {
           if (res.data.resultCode === 0) {
             dispatch(updateTaskAC(taskId, domainModel, todoId));
-            dispatch(setAppStatusAC('succeeded'));
+            dispatch(setAppStatusAC({ status: 'succeeded' }));
           } else {
             handleAppError(dispatch, res.data);
           }
-          dispatch(setAppStatusAC('failed'));
+          dispatch(setAppStatusAC({ status: 'failed' }));
         })
         .catch((err: AxiosError) => {
           handleNetworkError(dispatch, err.message);

@@ -2,8 +2,8 @@ import { AxiosError } from 'axios';
 import { RequestStatusType, setAppStatusAC } from './app-reducer';
 import { todolistAPI, TodolistType } from '../api/todolist-api';
 import { handleAppError, handleNetworkError } from '../utils/error-utils';
-import { AppThunk } from './store';
 import { getTasksTC } from './tasks-reducer';
+import { Dispatch } from '@reduxjs/toolkit';
 
 const initialState: Array<TodolistDomainType> = [];
 
@@ -76,14 +76,14 @@ export const changeTodolistEntityStatusAC = (todoId: string, entityStatus: Reque
 };
 
 //Thunks(TC)
-export const getTodosTC = (): AppThunk => {
-  return (dispatch) => {
-    dispatch(setAppStatusAC('loading'));
+export const getTodosTC = () => {
+  return (dispatch: Dispatch<any>) => {
+    dispatch(setAppStatusAC({ status: 'loading' }));
     todolistAPI
       .getTodolists()
       .then((res) => {
         dispatch(setTodolistAC(res.data));
-        dispatch(setAppStatusAC('succeeded'));
+        dispatch(setAppStatusAC({ status: 'succeeded' }));
         return res.data;
       })
       .then((todos) => {
@@ -94,67 +94,61 @@ export const getTodosTC = (): AppThunk => {
   };
 };
 
-export const addTodoTC =
-  (title: string): AppThunk =>
-  (dispatch) => {
-    dispatch(setAppStatusAC('loading'));
-    todolistAPI
-      .createTodolist(title)
-      .then((res) => {
-        if (res.data.resultCode === 0) {
-          const todo = res.data.data.item;
-          dispatch(addTodolistAC(todo));
-          dispatch(setAppStatusAC('succeeded'));
-        } else {
-          handleAppError(dispatch, res.data);
-        }
-        dispatch(setAppStatusAC('failed'));
-      })
-      .catch((err: AxiosError) => {
-        handleNetworkError(dispatch, err.message);
-      });
-  };
+export const addTodoTC = (title: string) => (dispatch: Dispatch) => {
+  dispatch(setAppStatusAC({ status: 'loading' }));
+  todolistAPI
+    .createTodolist(title)
+    .then((res) => {
+      if (res.data.resultCode === 0) {
+        const todo = res.data.data.item;
+        dispatch(addTodolistAC(todo));
+        dispatch(setAppStatusAC({ status: 'succeeded' }));
+      } else {
+        handleAppError(dispatch, res.data);
+      }
+      dispatch(setAppStatusAC({ status: 'failed' }));
+    })
+    .catch((err: AxiosError) => {
+      handleNetworkError(dispatch, err.message);
+    });
+};
 
-export const removeTodoTC =
-  (todoId: string): AppThunk =>
-  (dispatch) => {
-    dispatch(setAppStatusAC('loading'));
-    dispatch(changeTodolistEntityStatusAC(todoId, 'loading'));
-    todolistAPI
-      .deleteTodolist(todoId)
-      .then((res) => {
-        if (res.data.resultCode === 0) {
-          dispatch(removeTodolistAC(todoId));
-          dispatch(setAppStatusAC('succeeded'));
-        } else {
-          handleAppError(dispatch, res.data);
-        }
-        dispatch(setAppStatusAC('failed'));
-      })
-      .catch((err: AxiosError) => {
-        handleNetworkError(dispatch, err.message);
-      });
-  };
+export const removeTodoTC = (todoId: string) => (dispatch: Dispatch) => {
+  dispatch(setAppStatusAC({ status: 'loading' }));
+  dispatch(changeTodolistEntityStatusAC(todoId, 'loading'));
+  todolistAPI
+    .deleteTodolist(todoId)
+    .then((res) => {
+      if (res.data.resultCode === 0) {
+        dispatch(removeTodolistAC(todoId));
+        dispatch(setAppStatusAC({ status: 'succeeded' }));
+      } else {
+        handleAppError(dispatch, res.data);
+      }
+      dispatch(setAppStatusAC({ status: 'failed' }));
+    })
+    .catch((err: AxiosError) => {
+      handleNetworkError(dispatch, err.message);
+    });
+};
 
-export const changeTodoTitleTC =
-  (todoId: string, title: string): AppThunk =>
-  (dispatch) => {
-    dispatch(setAppStatusAC('loading'));
-    todolistAPI
-      .updateTodolist(todoId, title)
-      .then((res) => {
-        if (res.data.resultCode === 0) {
-          dispatch(changeTodolistTitleAC(todoId, title));
-          dispatch(setAppStatusAC('succeeded'));
-        } else {
-          handleAppError(dispatch, res.data);
-        }
-        dispatch(setAppStatusAC('failed'));
-      })
-      .catch((err: AxiosError) => {
-        handleNetworkError(dispatch, err.message);
-      });
-  };
+export const changeTodoTitleTC = (todoId: string, title: string) => (dispatch: Dispatch) => {
+  dispatch(setAppStatusAC({ status: 'loading' }));
+  todolistAPI
+    .updateTodolist(todoId, title)
+    .then((res) => {
+      if (res.data.resultCode === 0) {
+        dispatch(changeTodolistTitleAC(todoId, title));
+        dispatch(setAppStatusAC({ status: 'succeeded' }));
+      } else {
+        handleAppError(dispatch, res.data);
+      }
+      dispatch(setAppStatusAC({ status: 'failed' }));
+    })
+    .catch((err: AxiosError) => {
+      handleNetworkError(dispatch, err.message);
+    });
+};
 
 //types
 export type RemoveTodolistActionType = ReturnType<typeof removeTodolistAC>;
