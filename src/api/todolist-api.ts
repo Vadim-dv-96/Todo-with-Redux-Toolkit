@@ -46,10 +46,14 @@ export type AuthMeResponseType = {
   email: string;
   login: string;
 };
+export type FieldsErrorsType = {
+  error: string;
+  field: string;
+};
 export type BaseResponseType<T = {}> = {
   resultCode: number;
   messages: Array<string>;
-  fieldsErrors: Array<string>;
+  fieldsErrors: Array<FieldsErrorsType>;
   data: T;
 };
 export type TodolistType = {

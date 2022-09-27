@@ -4,7 +4,7 @@ import { TodolistList } from './components/TodolistList/TodolistList';
 import { useAppDispatch, useAppSelector } from './hooks/hooks';
 import { ErrorSnackbar } from './components/ErrorSnackbar/ErrorSnackbar';
 import { Login } from './components/Login/Login';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
 import { initializeAppTC } from './state/app-reducer';
 import { logoutTC } from './components/Login/auth-reducer';

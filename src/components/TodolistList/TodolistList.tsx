@@ -33,7 +33,7 @@ export const TodolistList: React.FC<TodolistListPropsType> = ({ demo = false }) 
 
   const removeTask = useCallback(
     (todoId: string, taskId: string) => {
-      dispatch(deleteTaskTC(todoId, taskId));
+      dispatch(deleteTaskTC({ todoId: todoId, taskId: taskId }));
     },
     [dispatch]
   );

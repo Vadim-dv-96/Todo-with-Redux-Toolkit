@@ -1,4 +1,5 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { MemoryRouter } from 'react-router-dom';
 import AppWithRedux from '../AppWithRedux';
 import { ReduxStoreProviderDecorator } from '../state/ReduxStoreProviderDecorator';
 
@@ -8,7 +9,11 @@ export default {
   decorators: [ReduxStoreProviderDecorator],
 } as ComponentMeta<typeof AppWithRedux>;
 
-const Template: ComponentStory<typeof AppWithRedux> = (args) => <AppWithRedux {...args} />;
+const Template: ComponentStory<typeof AppWithRedux> = (args) => (
+  <MemoryRouter>
+    <AppWithRedux {...args} />
+  </MemoryRouter>
+);
 
 export const AppWithReduxStory = Template.bind({});
 AppWithReduxStory.args = {

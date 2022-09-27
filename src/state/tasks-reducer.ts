@@ -3,22 +3,96 @@ import { RequestStatusType, setAppStatusAC } from './app-reducer';
 import { taskAPI, TaskPriorities, TaskStatuses, TaskType, UpdateTaskModelType } from '../api/task-api';
 import { handleAppError, handleNetworkError } from '../utils/error-utils';
 import { AppRootStateType } from './store';
-import { createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit';
 import { addTodolistAC, removeTodolistAC, setTodolistAC } from './todolists-reducer';
 
 const initialState: TasksStateType = {};
+
+// export const getTasksTC = createAsyncThunk('tasks/getTasks', (todoId: string, thunkAPI) => {
+//   thunkAPI.dispatch(setAppStatusAC({ status: 'loading' }));
+//   return taskAPI.getTasks(todoId).then((res) => {
+//     const tasks = res.data.items;
+//     thunkAPI.dispatch(setAppStatusAC({ status: 'succeeded' }));
+//     return { todoId: todoId, tasks: tasks };
+//   });
+// });
+
+export const getTasksTC = createAsyncThunk('tasks/getTasks', async (todoId: string, thunkAPI) => {
+  thunkAPI.dispatch(setAppStatusAC({ status: 'loading' }));
+  try {
+    const res = await taskAPI.getTasks(todoId);
+    const tasks = res.data.items;
+    thunkAPI.dispatch(setAppStatusAC({ status: 'succeeded' }));
+    return { todoId: todoId, tasks: tasks };
+  } catch (error) {
+    if (error instanceof Error) {
+      handleNetworkError(thunkAPI.dispatch, error.message);
+    }
+  }
+});
+
+//.then
+// export const deleteTaskTC_ = createAsyncThunk(
+//   'tasks/deleteTask',
+//   (param: { todoId: string; taskId: string }, thunkAPI) => {
+//     thunkAPI.dispatch(setAppStatusAC({ status: 'loading' }));
+//     thunkAPI.dispatch(
+//       changeTaskEntityStatusAC({ todoId: param.todoId, entityTaskStatus: 'loading', taskId: param.taskId })
+//     );
+//     return taskAPI
+//       .deleteTask(param.todoId, param.taskId)
+//       .then((res) => {
+//         if (res.data.resultCode === 0) {
+//           thunkAPI.dispatch(setAppStatusAC({ status: 'succeeded' }));
+//           return { todoId: param.todoId, taskId: param.taskId };
+//         } else {
+//           handleAppError(thunkAPI.dispatch, res.data);
+//         }
+//         thunkAPI.dispatch(setAppStatusAC({ status: 'failed' }));
+//       })
+//       .catch((err: AxiosError) => {
+//         handleNetworkError(thunkAPI.dispatch, err.message);
+//       });
+//   }
+// );
+
+export const deleteTaskTC = createAsyncThunk(
+  'tasks/deleteTask',
+  async (param: { todoId: string; taskId: string }, thunkAPI) => {
+    thunkAPI.dispatch(setAppStatusAC({ status: 'loading' }));
+    thunkAPI.dispatch(
+      changeTaskEntityStatusAC({ todoId: param.todoId, entityTaskStatus: 'loading', taskId: param.taskId })
+    );
+    try {
+      const res = await taskAPI.deleteTask(param.todoId, param.taskId);
+      if (res.data.resultCode === 0) {
+        thunkAPI.dispatch(setAppStatusAC({ status: 'succeeded' }));
+        return { todoId: param.todoId, taskId: param.taskId };
+      } else {
+        handleAppError(thunkAPI.dispatch, res.data);
+        thunkAPI.dispatch(setAppStatusAC({ status: 'failed' }));
+        return { todoId: '', taskId: '' };
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        handleNetworkError(thunkAPI.dispatch, err.message);
+      }
+      return { todoId: '', taskId: '' };
+    }
+  }
+);
 
 const slice = createSlice({
   name: 'tasks',
   initialState: initialState,
   reducers: {
-    removeTaskAC(state, action: PayloadAction<{ todoId: string; taskId: string }>) {
-      const tasks = state[action.payload.todoId];
-      const taskIndex = tasks.findIndex((t) => t.id === action.payload.taskId);
-      if (taskIndex > -1) {
-        tasks.splice(taskIndex, 1);
-      }
-    },
+    // removeTaskAC(state, action: PayloadAction<{ todoId: string; taskId: string }>) {
+    //   const tasks = state[action.payload.todoId];
+    //   const taskIndex = tasks.findIndex((t) => t.id === action.payload.taskId);
+    //   if (taskIndex > -1) {
+    //     tasks.splice(taskIndex, 1);
+    //   }
+    // },
     addTaskAC(state, action: PayloadAction<{ task: TaskType }>) {
       const newTask = action.payload.task;
       const domainNewTask: TaskDomainType = { ...newTask, entityTaskStatus: 'idle' };
@@ -31,9 +105,9 @@ const slice = createSlice({
         tasks[taskIndex] = { ...tasks[taskIndex], ...action.payload.model };
       }
     },
-    getTasksAC(state, action: PayloadAction<{ todoId: string; tasks: TaskType[] }>) {
-      state[action.payload.todoId] = action.payload.tasks.map((t) => ({ ...t, entityTaskStatus: 'idle' }));
-    },
+    // getTasksAC(state, action: PayloadAction<{ todoId: string; tasks: TaskType[] }>) {
+    //   state[action.payload.todoId] = action.payload.tasks.map((t) => ({ ...t, entityTaskStatus: 'idle' }));
+    // },
     changeTaskEntityStatusAC(
       state,
       action: PayloadAction<{ todoId: string; entityTaskStatus: RequestStatusType; taskId: string }>
@@ -55,11 +129,23 @@ const slice = createSlice({
     builder.addCase(setTodolistAC, (state, action) => {
       action.payload.todolists.forEach((tl) => (state[tl.id] = []));
     });
+    builder.addCase(getTasksTC.fulfilled, (state, action) => {
+      if (action.payload) {
+        state[action.payload.todoId] = action.payload.tasks.map((t) => ({ ...t, entityTaskStatus: 'idle' }));
+      }
+    });
+    builder.addCase(deleteTaskTC.fulfilled, (state, action) => {
+      const tasks = state[action.payload.todoId];
+      const taskIndex = tasks.findIndex((t) => t.id === action.payload.taskId);
+      if (taskIndex > -1) {
+        tasks.splice(taskIndex, 1);
+      }
+    });
   },
 });
 
 export const tasksReducer = slice.reducer;
-export const { addTaskAC, changeTaskEntityStatusAC, getTasksAC, removeTaskAC, updateTaskAC } = slice.actions;
+export const { addTaskAC, changeTaskEntityStatusAC, updateTaskAC } = slice.actions;
 
 // export const tasksReducer = (state: TasksStateType = initialState, action: TaskActionsType): TasksStateType => {
 //   switch (action.type) {
@@ -137,33 +223,34 @@ export const { addTaskAC, changeTaskEntityStatusAC, getTasksAC, removeTaskAC, up
 // };
 
 // Thunks
-export const getTasksTC = (todoId: string) => (dispatch: Dispatch) => {
-  dispatch(setAppStatusAC({ status: 'loading' }));
-  taskAPI.getTasks(todoId).then((res) => {
-    const tasks = res.data.items;
-    dispatch(getTasksAC({ todoId: todoId, tasks: tasks }));
-    dispatch(setAppStatusAC({ status: 'succeeded' }));
-  });
-};
 
-export const deleteTaskTC = (todoId: string, taskId: string) => (dispatch: Dispatch) => {
-  dispatch(setAppStatusAC({ status: 'loading' }));
-  dispatch(changeTaskEntityStatusAC({ todoId: todoId, entityTaskStatus: 'loading', taskId: taskId }));
-  taskAPI
-    .deleteTask(todoId, taskId)
-    .then((res) => {
-      if (res.data.resultCode === 0) {
-        dispatch(removeTaskAC({ todoId, taskId }));
-        dispatch(setAppStatusAC({ status: 'succeeded' }));
-      } else {
-        handleAppError(dispatch, res.data);
-      }
-      dispatch(setAppStatusAC({ status: 'failed' }));
-    })
-    .catch((err: AxiosError) => {
-      handleNetworkError(dispatch, err.message);
-    });
-};
+// export const getTasksTC_ = (todoId: string) => (dispatch: Dispatch) => {
+//   dispatch(setAppStatusAC({ status: 'loading' }));
+//   taskAPI.getTasks(todoId).then((res) => {
+//     const tasks = res.data.items;
+//     dispatch(getTasksAC({ todoId: todoId, tasks: tasks }));
+//     dispatch(setAppStatusAC({ status: 'succeeded' }));
+//   });
+// };
+
+// export const deleteTaskTC_ = (todoId: string, taskId: string) => (dispatch: Dispatch) => {
+//   dispatch(setAppStatusAC({ status: 'loading' }));
+//   dispatch(changeTaskEntityStatusAC({ todoId: todoId, entityTaskStatus: 'loading', taskId: taskId }));
+//   taskAPI
+//     .deleteTask(todoId, taskId)
+//     .then((res) => {
+//       if (res.data.resultCode === 0) {
+//         dispatch(removeTaskAC({ todoId, taskId }));
+//         dispatch(setAppStatusAC({ status: 'succeeded' }));
+//       } else {
+//         handleAppError(dispatch, res.data);
+//       }
+//       dispatch(setAppStatusAC({ status: 'failed' }));
+//     })
+//     .catch((err: AxiosError) => {
+//       handleNetworkError(dispatch, err.message);
+//     });
+// };
 
 export const addTaskTC = (todoId: string, title: string) => (dispatch: Dispatch) => {
   dispatch(setAppStatusAC({ status: 'loading' }));

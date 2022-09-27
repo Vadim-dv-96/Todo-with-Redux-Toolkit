@@ -1,21 +1,53 @@
-import { createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
-import { authAPI, LoginParamsType } from '../../api/todolist-api';
+import { authAPI, FieldsErrorsType, LoginParamsType } from '../../api/todolist-api';
 import { setAppStatusAC } from '../../state/app-reducer';
 import { handleAppError, handleNetworkError } from '../../utils/error-utils';
 
-const initialState = {
-  isLoggedIn: false,
-};
+// const initialState = {
+//   isLoggedIn: false,
+// };
 // type InitialStateType = typeof initialState;
+
+export const loginTC = createAsyncThunk<
+  { value: boolean },
+  LoginParamsType,
+  {
+    rejectValue: { errors: Array<string>; fieldsErrors: Array<FieldsErrorsType> };
+  }
+>('auth/login', async (param, thunkAPI) => {
+  thunkAPI.dispatch(setAppStatusAC({ status: 'loading' }));
+  try {
+    const res = await authAPI.login(param);
+    if (res.data.resultCode === 0) {
+      thunkAPI.dispatch(setAppStatusAC({ status: 'succeeded' }));
+      return { value: true };
+    } else {
+      handleAppError(thunkAPI.dispatch, res.data);
+      thunkAPI.dispatch(setAppStatusAC({ status: 'failed' }));
+      return thunkAPI.rejectWithValue({ errors: res.data.messages, fieldsErrors: res.data.fieldsErrors });
+    }
+  } catch (err) {
+    const error: AxiosError = err as AxiosError;
+    handleNetworkError(thunkAPI.dispatch, error.message);
+    return thunkAPI.rejectWithValue({ errors: [error.message], fieldsErrors: [] });
+  }
+});
 
 const sliceAuth = createSlice({
   name: 'auth',
-  initialState: initialState,
+  initialState: {
+    isLoggedIn: false,
+  },
   reducers: {
     setIsLoggedInAC(state, action: PayloadAction<{ value: boolean }>) {
       state.isLoggedIn = action.payload.value;
     },
+  },
+  extraReducers(builder) {
+    builder.addCase(loginTC.fulfilled, (state, action) => {
+      state.isLoggedIn = action.payload.value;
+    });
   },
 });
 
@@ -37,23 +69,24 @@ export const { setIsLoggedInAC } = sliceAuth.actions;
 // };
 
 // TC
-export const loginTC = (loginPayload: LoginParamsType) => (dispatch: Dispatch) => {
-  dispatch(setAppStatusAC({ status: 'loading' }));
-  authAPI
-    .login(loginPayload)
-    .then((res) => {
-      if (res.data.resultCode === 0) {
-        dispatch(setIsLoggedInAC({ value: true }));
-        dispatch(setAppStatusAC({ status: 'succeeded' }));
-      } else {
-        handleAppError(dispatch, res.data);
-      }
-      dispatch(setAppStatusAC({ status: 'failed' }));
-    })
-    .catch((err: AxiosError) => {
-      handleNetworkError(dispatch, err.message);
-    });
-};
+// export const loginTC_ = (loginPayload: LoginParamsType) => (dispatch: Dispatch) => {
+//   dispatch(setAppStatusAC({ status: 'loading' }));
+//   authAPI
+//     .login(loginPayload)
+//     .then((res) => {
+//       if (res.data.resultCode === 0) {
+//         dispatch(setIsLoggedInAC({ value: true }));
+//         dispatch(setAppStatusAC({ status: 'succeeded' }));
+//       } else {
+//         handleAppError(dispatch, res.data);
+//       }
+//       dispatch(setAppStatusAC({ status: 'failed' }));
+//     })
+//     .catch((err: AxiosError) => {
+//       handleNetworkError(dispatch, err.message);
+//     });
+// };
+
 export const logoutTC = () => (dispatch: Dispatch) => {
   dispatch(setAppStatusAC({ status: 'loading' }));
   authAPI

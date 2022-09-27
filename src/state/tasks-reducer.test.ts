@@ -1,6 +1,7 @@
 import {
   addTaskAC,
-  removeTaskAC,
+  deleteTaskTC,
+  getTasksTC,
   tasksReducer,
   TasksStateType,
   UpdateDomainTaskModelType,
@@ -103,8 +104,30 @@ beforeEach(() => {
   };
 });
 
+test('tasks should be added for todo', () => {
+  const action = getTasksTC.fulfilled(
+    { tasks: startState['todolistId1'], todoId: 'todolistId1' },
+    'requestId',
+    'todolistId1'
+  );
+
+  const endState = tasksReducer(
+    {
+      todolistId2: [],
+      todolistId1: [],
+    },
+    action
+  );
+
+  expect(endState['todolistId1'].length).toBe(3);
+  expect(endState['todolistId2'].length).toBe(0);
+});
+
 test('correct task should be deleted from correct array', () => {
-  const action = removeTaskAC({ todoId: 'todolistId2', taskId: '2' });
+  const action = deleteTaskTC.fulfilled({ todoId: 'todolistId2', taskId: '2' }, 'requestId', {
+    todoId: 'todolistId2',
+    taskId: '2',
+  });
 
   const endState = tasksReducer(startState, action);
 
