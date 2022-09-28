@@ -1,5 +1,4 @@
 import { BaseResponseType } from '../api/todolist-api';
-// import { AppDispatch } from '../state/store';
 import { Dispatch } from '@reduxjs/toolkit';
 import { setAppStatusAC, setErrorAC } from '../state/app-reducer';
 

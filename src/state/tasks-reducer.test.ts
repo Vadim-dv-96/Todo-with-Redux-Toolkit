@@ -1,5 +1,5 @@
 import {
-  addTaskAC,
+  addTaskTC,
   deleteTaskTC,
   getTasksTC,
   tasksReducer,
@@ -218,7 +218,7 @@ test('correct task should be added to correct array', () => {
     description: '',
     entityTaskStatus: 'idle',
   };
-  const action = addTaskAC({ task: newTask });
+  const action = addTaskTC.fulfilled(newTask, 'requestId', { todoId: newTask.todoListId, title: newTask.title });
 
   const endState = tasksReducer(startState, action);
 

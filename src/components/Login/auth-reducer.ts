@@ -1,16 +1,11 @@
-import { createAsyncThunk, createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 import { authAPI, FieldsErrorsType, LoginParamsType } from '../../api/todolist-api';
 import { setAppStatusAC } from '../../state/app-reducer';
 import { handleAppError, handleNetworkError } from '../../utils/error-utils';
 
-// const initialState = {
-//   isLoggedIn: false,
-// };
-// type InitialStateType = typeof initialState;
-
 export const loginTC = createAsyncThunk<
-  { value: boolean },
+  undefined,
   LoginParamsType,
   {
     rejectValue: { errors: Array<string>; fieldsErrors: Array<FieldsErrorsType> };
@@ -21,7 +16,7 @@ export const loginTC = createAsyncThunk<
     const res = await authAPI.login(param);
     if (res.data.resultCode === 0) {
       thunkAPI.dispatch(setAppStatusAC({ status: 'succeeded' }));
-      return { value: true };
+      return;
     } else {
       handleAppError(thunkAPI.dispatch, res.data);
       thunkAPI.dispatch(setAppStatusAC({ status: 'failed' }));
@@ -31,6 +26,25 @@ export const loginTC = createAsyncThunk<
     const error: AxiosError = err as AxiosError;
     handleNetworkError(thunkAPI.dispatch, error.message);
     return thunkAPI.rejectWithValue({ errors: [error.message], fieldsErrors: [] });
+  }
+});
+
+export const logoutTC = createAsyncThunk('auth/logout', async (param, thunkAPI) => {
+  thunkAPI.dispatch(setAppStatusAC({ status: 'loading' }));
+  try {
+    const res = await authAPI.logOut();
+    if (res.data.resultCode === 0) {
+      thunkAPI.dispatch(setAppStatusAC({ status: 'succeeded' }));
+      return;
+    } else {
+      handleAppError(thunkAPI.dispatch, res.data);
+      thunkAPI.dispatch(setAppStatusAC({ status: 'failed' }));
+      return thunkAPI.rejectWithValue({});
+    }
+  } catch (err) {
+    const error: AxiosError = err as AxiosError;
+    handleNetworkError(thunkAPI.dispatch, error.message);
+    return thunkAPI.rejectWithValue({});
   }
 });
 
@@ -45,65 +59,14 @@ const sliceAuth = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(loginTC.fulfilled, (state, action) => {
-      state.isLoggedIn = action.payload.value;
+    builder.addCase(loginTC.fulfilled, (state) => {
+      state.isLoggedIn = true;
+    });
+    builder.addCase(logoutTC.fulfilled, (state) => {
+      state.isLoggedIn = false;
     });
   },
 });
 
 export const authReducer = sliceAuth.reducer;
 export const { setIsLoggedInAC } = sliceAuth.actions;
-
-// export const authReducer = (state: InitialStateType = initialState, action: AuthActionsType) => {
-//   switch (action.type) {
-//     case 'login/SET-IS-LOGGED-IN':
-//       return { ...state, isLoggedIn: action.value };
-//     default:
-//       return state;
-//   }
-// };
-
-// AC
-// export const setIsLoggedInAC = (value: boolean) => {
-//   return { type: 'login/SET-IS-LOGGED-IN', value } as const;
-// };
-
-// TC
-// export const loginTC_ = (loginPayload: LoginParamsType) => (dispatch: Dispatch) => {
-//   dispatch(setAppStatusAC({ status: 'loading' }));
-//   authAPI
-//     .login(loginPayload)
-//     .then((res) => {
-//       if (res.data.resultCode === 0) {
-//         dispatch(setIsLoggedInAC({ value: true }));
-//         dispatch(setAppStatusAC({ status: 'succeeded' }));
-//       } else {
-//         handleAppError(dispatch, res.data);
-//       }
-//       dispatch(setAppStatusAC({ status: 'failed' }));
-//     })
-//     .catch((err: AxiosError) => {
-//       handleNetworkError(dispatch, err.message);
-//     });
-// };
-
-export const logoutTC = () => (dispatch: Dispatch) => {
-  dispatch(setAppStatusAC({ status: 'loading' }));
-  authAPI
-    .logOut()
-    .then((res) => {
-      if (res.data.resultCode === 0) {
-        dispatch(setIsLoggedInAC({ value: false }));
-        dispatch(setAppStatusAC({ status: 'succeeded' }));
-      } else {
-        handleAppError(dispatch, res.data);
-      }
-      dispatch(setAppStatusAC({ status: 'failed' }));
-    })
-    .catch((err: AxiosError) => {
-      handleNetworkError(dispatch, err.message);
-    });
-};
-
-// types
-// export type AuthActionsType = ReturnType<typeof setIsLoggedInAC>;

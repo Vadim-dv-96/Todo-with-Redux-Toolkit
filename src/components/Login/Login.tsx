@@ -55,7 +55,7 @@ export const Login = () => {
           formikHelpers.setFieldError(error.field, error.error); //отображение ошибки из бэка соответствующего филда
         }
       }
-      formik.resetForm(); // зачистка полей ввода после логинизации
+      //formik.resetForm(); // зачистка полей ввода после логинизации
     },
   });
 
