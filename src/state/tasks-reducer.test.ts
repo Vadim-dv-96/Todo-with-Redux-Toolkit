@@ -5,9 +5,9 @@ import {
   tasksReducer,
   TasksStateType,
   UpdateDomainTaskModelType,
-  updateTaskAC,
+  updateTaskTC,
 } from './tasks-reducer';
-import { addTodolistAC, removeTodolistAC } from './todolists-reducer';
+import { addTodoTC, removeTodoTC } from './todolists-reducer';
 import { TaskPriorities, TaskStatuses } from '../api/task-api';
 import { TodolistType } from '../api/todolist-api';
 
@@ -230,7 +230,19 @@ test('correct task should be added to correct array', () => {
 });
 
 test('status of specified task should be changed', () => {
-  const action = updateTaskAC({ taskId: '2', model: { status: TaskStatuses.New }, todoId: 'todolistId2' });
+  const action = updateTaskTC.fulfilled(
+    {
+      taskId: '2',
+      model: { status: TaskStatuses.New },
+      todoId: 'todolistId2',
+    },
+    'requestId',
+    {
+      taskId: '2',
+      domainModel: { status: TaskStatuses.New },
+      todoId: 'todolistId2',
+    }
+  );
 
   const endState = tasksReducer(startState, action);
 
@@ -238,8 +250,19 @@ test('status of specified task should be changed', () => {
 });
 
 test('task title should be changed', () => {
-  const action = updateTaskAC({ taskId: '1', model: { title: 'REACT' }, todoId: 'todolistId1' });
-
+  const action = updateTaskTC.fulfilled(
+    {
+      taskId: '1',
+      model: { title: 'REACT' },
+      todoId: 'todolistId1',
+    },
+    'requestId',
+    {
+      taskId: '1',
+      domainModel: { title: 'REACT' },
+      todoId: 'todolistId1',
+    }
+  );
   const endState = tasksReducer(startState, action);
 
   expect(endState['todolistId1'][0].title).toBe('REACT');
@@ -252,7 +275,7 @@ test('new array should be added when new todolist is added', () => {
     order: 1,
     title: 'new todolist',
   };
-  const action = addTodolistAC({ todo });
+  const action = addTodoTC.fulfilled({ todo }, 'requestId', { title: todo.title });
 
   const endState = tasksReducer(startState, action);
 
@@ -267,7 +290,7 @@ test('new array should be added when new todolist is added', () => {
 });
 
 test('property with todolistId should be deleted', () => {
-  const action = removeTodolistAC({ todoId: 'todolistId2' });
+  const action = removeTodoTC.fulfilled({ todoId: 'todolistId2' }, 'requestId', { todoId: 'todolistId2' });
 
   const endState = tasksReducer(startState, action);
 

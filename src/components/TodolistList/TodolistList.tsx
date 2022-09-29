@@ -47,14 +47,14 @@ export const TodolistList: React.FC<TodolistListPropsType> = ({ demo = false }) 
 
   const changeTaskStatus = useCallback(
     (taskId: string, status: TaskStatuses, todoId: string) => {
-      dispatch(updateTaskTC(todoId, taskId, { status }));
+      dispatch(updateTaskTC({ todoId: todoId, taskId: taskId, domainModel: { status } }));
     },
     [dispatch]
   );
 
   const changeTaskTitle = useCallback(
     (todoId: string, taskId: string, newTitle: string) => {
-      dispatch(updateTaskTC(todoId, taskId, { title: newTitle }));
+      dispatch(updateTaskTC({ todoId: todoId, taskId: taskId, domainModel: { title: newTitle } }));
     },
     [dispatch]
   );
@@ -68,23 +68,21 @@ export const TodolistList: React.FC<TodolistListPropsType> = ({ demo = false }) 
 
   const changeTodoTitle = useCallback(
     (todoId: string, newTitle: string) => {
-      dispatch(changeTodoTitleTC(todoId, newTitle));
+      dispatch(changeTodoTitleTC({ todoId, title: newTitle }));
     },
     [dispatch]
   );
 
   const removeTodolist = useCallback(
     (todoId: string) => {
-      // const action = removeTodoTC(todoId); //создане переменной,что бы не создавать 2 обьекта ActionCreate
-      dispatch(removeTodoTC(todoId));
+      dispatch(removeTodoTC({ todoId }));
     },
     [dispatch]
   );
 
   const addTodolist = useCallback(
     (title: string) => {
-      // const action = addTodoTC(title); //делаем переменную action для одинаковой todoId в оба редьюсера
-      dispatch(addTodoTC(title));
+      dispatch(addTodoTC({ title }));
     },
     [dispatch]
   );
