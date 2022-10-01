@@ -11,7 +11,6 @@ export const getTasksTC = createAsyncThunk('tasks/getTasks', async (todoId: stri
   try {
     const res = await taskAPI.getTasks(todoId);
     const tasks = res.data.items;
-    debugger;
     thunkAPI.dispatch(setAppStatusAC({ status: 'succeeded' }));
     return { todoId: todoId, tasks: tasks };
   } catch (err) {
@@ -139,9 +138,7 @@ const slice = createSlice({
       action.payload.todolists.forEach((tl) => (state[tl.id] = []));
     });
     builder.addCase(getTasksTC.fulfilled, (state, action) => {
-      debugger;
       state[action.payload.todoId] = action.payload.tasks.map((t) => {
-        debugger;
         return { ...t, entityTaskStatus: 'idle' };
       });
     });
